@@ -4,15 +4,15 @@ import { Message } from './entities/message.entity';
 @Injectable()
 export class MessagesService {
   #messages: Message[];
-  #users: Map<string, string>;
+  #users: {};
 
   identity(name: string, clientId: string) {
-    this.#users.set(clientId, name);
+    this.#users[clientId] = name;
   }
 
   async create(text: string, clientId: string) {
     const message = {
-      author: this.#users.get(clientId),
+      author: this.#users[clientId],
       text,
     };
     this.#messages.push(message);

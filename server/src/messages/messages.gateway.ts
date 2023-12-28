@@ -7,16 +7,24 @@ import {
 } from '@nestjs/websockets';
 import { MessagesService } from './messages.service';
 import { Server, Socket } from 'socket.io';
+import { OnModuleInit } from '@nestjs/common';
 
 @WebSocketGateway({
   namespace: 'messages',
-  cors: { origin: 'http://localhost:3000' },
+  cors: { origin: '*' },
 })
-export class MessagesGateway {
+export class MessagesGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;
 
   constructor(private readonly messagesService: MessagesService) {}
+
+  onModuleInit() {
+    this.server.on('connection', (socket) => {
+      console.log(socket.id);
+      console.log('Connected to gateway');
+    });
+  }
 
   @SubscribeMessage('createMessage')
   async create(
